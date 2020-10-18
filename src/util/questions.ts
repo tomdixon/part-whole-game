@@ -29,7 +29,10 @@ export function expectedAnswerForQuestion(question: Question): number {
   }
 }
 
-export function generateQuestion(previousQuestion?: Question): Question {
+export function generateQuestion(
+  max: number,
+  previousQuestion?: Question,
+): Question {
   const orientation = (() => {
     let orientation: PartAndWholeOrientation;
     while (true) {
@@ -60,7 +63,7 @@ export function generateQuestion(previousQuestion?: Question): Question {
     return blank;
   })();
 
-  const whole = randomInt(1, 9);
+  const whole = randomInt(1, max);
   const part1 = randomInt(0, whole);
   const part2 = whole - part1;
 

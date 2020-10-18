@@ -17,11 +17,14 @@ enum Phase {
   Results,
 }
 
-const questionsPerGame = 10;
-const resultFeedbackTimeout = 2000;
+const LEVELS = [9, 20, 99];
+
+const QUESTIONS_PER_ROUND = 10;
+const RESULT_FEEDBACK_MS = 2000;
 
 export default function Game() {
   const [phase, setPhase] = useState(Phase.WaitingToStart);
+  const [level, setLevel] = useState<0 | 1 | 2>(2);
   const [results, setResults] = useState<boolean[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | undefined>(
     undefined,
@@ -29,10 +32,13 @@ export default function Game() {
   const [currentGuess, setCurrentGuess] = useState('');
   const [showingFeedback, setShowingFeedback] = useState(false);
 
+  const maxAnswerDigits = `${LEVELS[level]}`.length;
+
   function reset() {
-    setPhase(Phase.InProgress);
+    setPhase(Phase.WaitingToStart);
+    setLevel(0);
     setResults([]);
-    setCurrentQuestion(generateQuestion(undefined));
+    setCurrentQuestion(undefined);
     setCurrentGuess('');
   }
 
@@ -46,15 +52,15 @@ export default function Game() {
     setCurrentGuess(answerCorrect ? '🥳' : '🤔');
 
     setTimeout(() => {
-      if (questionsAnswered < questionsPerGame) {
+      if (questionsAnswered < QUESTIONS_PER_ROUND) {
         setCurrentGuess('');
-        setCurrentQuestion(generateQuestion(currentQuestion));
+        setCurrentQuestion(generateQuestion(LEVELS[level], currentQuestion));
       } else {
         setPhase(Phase.Results);
       }
 
       setShowingFeedback(false);
-    }, resultFeedbackTimeout);
+    }, RESULT_FEEDBACK_MS);
   }
 
   return (
@@ -63,8 +69,9 @@ export default function Game() {
 
       {phase === Phase.WaitingToStart && (
         <PressToStart
-          onPress={() => {
-            setCurrentQuestion(generateQuestion(undefined));
+          onPress={(level) => {
+            setLevel(level);
+            setCurrentQuestion(generateQuestion(LEVELS[level], undefined));
             setPhase(Phase.InProgress);
           }}
         />
@@ -98,14 +105,16 @@ export default function Game() {
             onKeyPress={(key) => {
               switch (key.type) {
                 case 'number': {
-                  if (currentGuess.length == 0) {
-                    setCurrentGuess(`${key.number}`);
+                  if (currentGuess.length < maxAnswerDigits) {
+                    setCurrentGuess(`${currentGuess}${key.number}`);
                   }
                   break;
                 }
                 case 'delete': {
                   if (currentGuess.length > 0) {
-                    setCurrentGuess('');
+                    setCurrentGuess(
+                      currentGuess.slice(0, currentGuess.length - 1),
+                    );
                   }
                   break;
                 }
@@ -124,7 +133,7 @@ export default function Game() {
       {phase === Phase.Results && (
         <Results
           results={results}
-          outOf={questionsPerGame}
+          outOf={QUESTIONS_PER_ROUND}
           onPlayAgainPressed={reset}
         />
       )}
