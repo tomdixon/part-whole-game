@@ -60,7 +60,7 @@ export function generateQuestion(previousQuestion?: Question): Question {
     return blank;
   })();
 
-  const whole = randomInt(2, 9);
+  const whole = randomInt(1, 9);
   const part1 = randomInt(0, whole);
   const part2 = whole - part1;
 

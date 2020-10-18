@@ -38,22 +38,36 @@ const keyboard: Key[][] = [
 ];
 
 export default function Keypad({
+  keypadDisabled,
+  enterDisabled,
+  deleteDisabled,
   onKeyPress,
 }: {
+  keypadDisabled: boolean;
+  enterDisabled: boolean;
+  deleteDisabled: boolean;
   onKeyPress: (key: Key) => void;
 }) {
   const rows = keyboard.map((keyRow, index) => {
     return (
       <div key={index} className="keypad-row">
-        {keyRow.map((key, index) => (
-          <div
-            key={index}
-            className={`button keypad-key ${key.type}`}
-            onClick={() => onKeyPress(key)}
-          >
-            {characterForKey(key)}
-          </div>
-        ))}
+        {keyRow.map((key, index) => {
+          const disabled =
+            keypadDisabled ||
+            (key.type === 'enter' && enterDisabled) ||
+            (key.type === 'delete' && deleteDisabled);
+          return (
+            <div
+              key={index}
+              className={`button keypad-key ${key.type} ${
+                disabled ? 'disabled' : ''
+              }`}
+              onClick={!disabled ? () => onKeyPress(key) : undefined}
+            >
+              {characterForKey(key)}
+            </div>
+          );
+        })}
       </div>
     );
   });

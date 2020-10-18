@@ -18,6 +18,7 @@ enum Phase {
 }
 
 const questionsPerGame = 10;
+const resultFeedbackTimeout = 2000;
 
 export default function Game() {
   const [phase, setPhase] = useState(Phase.WaitingToStart);
@@ -26,6 +27,7 @@ export default function Game() {
     undefined,
   );
   const [currentGuess, setCurrentGuess] = useState('');
+  const [showingFeedback, setShowingFeedback] = useState(false);
 
   function reset() {
     setPhase(Phase.InProgress);
@@ -36,15 +38,23 @@ export default function Game() {
 
   function processGuess() {
     const expected = expectedAnswerForQuestion(currentQuestion);
+    const answerCorrect = currentGuess === `${expected}`;
+    const questionsAnswered = results.length + 1;
 
-    setResults([...results, currentGuess === `${expected}`]);
+    setResults([...results, answerCorrect]);
+    setShowingFeedback(true);
+    setCurrentGuess(answerCorrect ? '🥳' : '🤔');
 
-    if (results.length + 1 < questionsPerGame) {
-      setCurrentGuess('');
-      setCurrentQuestion(generateQuestion(currentQuestion));
-    } else {
-      setPhase(Phase.Results);
-    }
+    setTimeout(() => {
+      if (questionsAnswered < questionsPerGame) {
+        setCurrentGuess('');
+        setCurrentQuestion(generateQuestion(currentQuestion));
+      } else {
+        setPhase(Phase.Results);
+      }
+
+      setShowingFeedback(false);
+    }, resultFeedbackTimeout);
   }
 
   return (
@@ -82,6 +92,9 @@ export default function Game() {
           />
 
           <Keypad
+            keypadDisabled={showingFeedback}
+            deleteDisabled={currentGuess.length === 0}
+            enterDisabled={currentGuess.length === 0}
             onKeyPress={(key) => {
               switch (key.type) {
                 case 'number': {
