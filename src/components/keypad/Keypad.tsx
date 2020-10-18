@@ -1,4 +1,5 @@
-import React from 'react';
+import * as Mousetrap from 'mousetrap';
+import React, { useEffect } from 'react';
 
 type Key = NumberKey | { type: 'delete' } | { type: 'enter' };
 
@@ -48,6 +49,30 @@ export default function Keypad({
   deleteDisabled: boolean;
   onKeyPress: (key: Key) => void;
 }) {
+  useEffect(() => {
+    Mousetrap.bind(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], (e) => {
+      if (!keypadDisabled) {
+        onKeyPress({ type: 'number', number: parseInt(e.key) });
+      }
+    });
+
+    Mousetrap.bind(['backspace'], () => {
+      if (!keypadDisabled && !deleteDisabled) {
+        onKeyPress({ type: 'delete' });
+      }
+    });
+
+    Mousetrap.bind(['enter'], () => {
+      if (!keypadDisabled && !enterDisabled) {
+        onKeyPress({ type: 'enter' });
+      }
+    });
+
+    return () => {
+      Mousetrap.reset();
+    };
+  }, [keypadDisabled, enterDisabled, deleteDisabled, onKeyPress]);
+
   const rows = keyboard.map((keyRow, index) => {
     return (
       <div key={index} className="keypad-row">

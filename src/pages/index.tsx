@@ -105,7 +105,10 @@ export default function Game() {
             onKeyPress={(key) => {
               switch (key.type) {
                 case 'number': {
-                  if (currentGuess.length < maxAnswerDigits) {
+                  if (
+                    currentGuess.length < maxAnswerDigits &&
+                    currentGuess !== '0'
+                  ) {
                     setCurrentGuess(`${currentGuess}${key.number}`);
                   }
                   break;
