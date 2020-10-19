@@ -49,7 +49,7 @@ export default function Game() {
 
     setResults([...results, answerCorrect]);
     setShowingFeedback(true);
-    setCurrentGuess(answerCorrect ? '🥳' : '🤔');
+    setCurrentGuess(answerCorrect ? 'correct' : 'incorrect');
 
     setTimeout(() => {
       if (questionsAnswered < QUESTIONS_PER_ROUND) {

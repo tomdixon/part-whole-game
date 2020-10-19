@@ -59,11 +59,34 @@ export default function PartAndWhole({
 }) {
   const lines = linesForOrientation(orientation);
 
+  const wholeCorrectness =
+    whole === 'correct' ? 'correct' : whole === 'incorrect' ? 'incorrect' : '';
+  const part1Correctness =
+    part1 === 'correct' ? 'correct' : part1 === 'incorrect' ? 'incorrect' : '';
+  const part2Correctness =
+    part2 === 'correct' ? 'correct' : part2 === 'incorrect' ? 'incorrect' : '';
+
+  const wholeText = wholeCorrectness.length ? '' : whole;
+  const part1Text = part1Correctness.length ? '' : part1;
+  const part2Text = part2Correctness.length ? '' : part2;
+
   return (
     <div className="part-whole-container">
-      <div className={`part-whole-box whole ${orientation}`}>{whole}</div>
-      <div className={`part-whole-box part1 ${orientation}`}>{part1}</div>
-      <div className={`part-whole-box part2 ${orientation}`}>{part2}</div>
+      <div
+        className={`part-whole-box whole ${orientation} ${wholeCorrectness}`}
+      >
+        {wholeText}
+      </div>
+      <div
+        className={`part-whole-box part1 ${orientation} ${part1Correctness}`}
+      >
+        {part1Text}
+      </div>
+      <div
+        className={`part-whole-box part2 ${orientation} ${part2Correctness}`}
+      >
+        {part2Text}
+      </div>
 
       <svg width="400" height="300">
         <line

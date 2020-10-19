@@ -84,6 +84,15 @@ h1 {
   font-family: monospace;
   font-size: 4em;
   background-color: #ffffb1;
+  background-position: center;
+}
+
+.part-whole-box.correct {
+  background-image: url('../img/correct.png');
+}
+
+.part-whole-box.incorrect {
+  background-image: url('../img/incorrect.png');
 }
 
 .whole.top {
